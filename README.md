@@ -26,7 +26,6 @@ To set up this project, follow these steps:
 
     ```bash
     npm install
-    --- this installs all the dependencies in the project
     ```
 
 ## Usage
