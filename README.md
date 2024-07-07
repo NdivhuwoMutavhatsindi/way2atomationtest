@@ -58,4 +58,14 @@ The script performs the following steps:
 The `logTestResult` function logs the test results to a file in the `results` directory. Each log entry includes the time and a message indicating whether the test passed or failed.
 
 ### Example Log Entry
-
+13:41:23 - TEST PASSED
+13:41:23 - TEST FAILED :(
+13:41:25 - TEST PASSED
+13:41:25 - TEST FAILED :(
+13:45:03 - TEST PASSED :)
+14:01:04 - TEST FAILED - Username already exists :(
+14:01:04 - TEST PASSED :)
+14:03:07 - TEST FAILED - Username already exists :(
+14:03:07 - TEST PASSED :)
+14:05:01 - TEST PASSED :)
+16:16:01 - TEST PASSED :)
