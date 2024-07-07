@@ -35,12 +35,10 @@ const users = [
         await driver.manage().window().maximize();
 
         // navigating to the web page...
-        await driver.get('https://www.way2automation.com/angularjs-protractor/webtables/')
-        console.log('Test A) PASSED');
+        await driver.get('https://www.way2automation.com/angularjs-protractor/webtables/');
 
         // validate that we are on the User List Table...
-        await driver.executeScript(`document.querySelector('table').scrollIntoView()`)
-        console.log('Test B) PASSED');
+        await driver.executeScript(`document.querySelector('table').scrollIntoView()`);
 
         // locating the user table...
         let userTable = await driver.findElement(By.css('.smart-table.table.table-striped'));
@@ -58,7 +56,6 @@ const users = [
 
             // clicking the "Add User" button...
             await userTable.findElement(By.css('.btn.btn-link.pull-right')).click()
-            console.log('Test C) PASSED');
 
             // locating the rows of the table...
             let rows = await userTable.findElements(By.css('tbody .smart-table-data-row.ng-scope'));
@@ -71,8 +68,8 @@ const users = [
                 // checking if the user exists in the User List Table...
                 if (cellValue.toLowerCase() === user.userName.toLowerCase()) {
                     usernameExists = true;
-                    console.log('Username already exists :(');
-                    logTestResult('TEST FAILED - Username already exists :(');
+                    console.log(`TEST FAILED - Username (${user?.userName}) already exists :(`);
+                    logTestResult(`TEST FAILED - Username (${user?.userName}) already exists :(`);
                     break;
                 };
             };
@@ -151,11 +148,33 @@ const users = [
                 // Wwaiting for 1 second before adding the next user...
                 await driver.sleep(1000);
             };
-        };
 
-        // logging that the test has passed...
-        console.log('Test PASSED');
-        logTestResult('TEST PASSED :)');
+            // getting the updated User List Table rows...
+            let newRows = await userTable.findElements(By.css('tbody .smart-table-data-row.ng-scope'));
+
+            let checkUserAdded = false;
+
+            // iterating through all updated User List Table rows
+            for (const row of newRows) {
+                let cells = await row.findElements(By.css('.smart-table-data-cell'));
+                let cellValue = await cells[2].getText();
+
+                // checking if the user was successfully added to the User List Table...
+                if (cellValue.toLowerCase() === user.userName.toLowerCase()) {
+                    checkUserAdded = true
+                    break;
+                };
+            };
+
+            // loging and adding to the test results the results based on whether the test passed or failed...
+            if (checkUserAdded) {
+                console.log(`User - (${user?.firstName + ' ' + user?.lastName}) was successfully added to the User List Table.`);
+                logTestResult(`User - (${user?.firstName + ' ' + user?.lastName}) was successfully added to the User List Table.`);
+            } else {
+                console.log(`User - (${user?.firstName + ' ' + user?.lastName}) was not added to the User List Table.`);
+                logTestResult(`User - (${user?.firstName + ' ' + user?.lastName}) was not added to the User List Table.`);
+            };
+        };
 
         // waiting 5 seconds before going to the next step, so we can see that the users were successfully added to the table...
         await driver.sleep(5000);
