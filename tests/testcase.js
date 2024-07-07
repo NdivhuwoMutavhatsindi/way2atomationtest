@@ -2,7 +2,7 @@ const { Builder, Browser, By, until } = require('selenium-webdriver');
 const fs = require('fs');
 const path = require('path');
 
-// Users to be added to the user table
+// an array of provided users to be added to the user table...
 const users = [
     {
         firstName: "FName1",
@@ -78,28 +78,33 @@ const users = [
             };
 
             if (!usernameExists) {
-                // Locate the modal for adding users
+                // locating the modal for adding users...
                 let addUserModal = await driver.findElement(By.css('.modal.ng-scope'));
                 let modalBody = await addUserModal.findElement(By.css('.modal-body'));
                 let modalForm = await modalBody.findElement(By.css('form'));
                 let modalRows = await modalForm.findElements(By.css('.smart-table-edit-data-cell.ng-scope'));
 
-                // Enter data in the form fields
+                // entering data in the form fields...
                 for (const [index, row] of modalRows.entries()) {
                     switch (index) {
                         case 0:
+                            // first name...
                             await addUserData(user.firstName, row);
                             break;
                         case 1:
+                            // last name...
                             await addUserData(user.lastName, row);
                             break;
                         case 2:
+                            // username...
                             await addUserData(user.userName, row);
                             break;
                         case 3:
+                            // password...
                             await addUserData(user.password, row);
                             break;
                         case 4:
+                            // selecting the type of company between Company AAA and Company BBB...
                             let labels = await row.findElements(By.css('label'));
                             if (user.customer.toLowerCase() === 'company aaa') {
                                 await labels[0].findElement(By.css('input')).click();
@@ -108,6 +113,7 @@ const users = [
                             }
                             break;
                         case 5:
+                            // selecting the type of user between Sales Team, Customer and Admin...
                             let selectTag = await row.findElement(By.css('select'));
                             await selectTag.click();
                             let options = await selectTag.findElements(By.css('option'));
@@ -124,15 +130,17 @@ const users = [
                             }
                             break;
                         case 6:
+                            // email...
                             await addUserData(user.email, row);
                             break;
                         case 7:
+                            // cell phone number...
                             await addUserData(user.cell, row);
                             break;
-                    }
-                }
+                    };
+                };
 
-                // Submit user details
+                // submiting user details...
                 let modalFooter = await addUserModal.findElement(By.css('.modal-footer'));
                 let submitButton = await modalFooter.findElement(By.css('.btn.btn-success'));
 
@@ -145,30 +153,44 @@ const users = [
             };
         };
 
-        console.log('Test PASSED')
+        // logging that the test has passed...
+        console.log('Test PASSED');
         logTestResult('TEST PASSED :)');
 
+        // waiting 5 seconds before going to the next step, so we can see that the users were successfully added to the table...
         await driver.sleep(5000);
     } catch (error) {
+        // logging that an error occured...
         console.warn('An Error Occurred:', error);
         logTestResult('TEST FAILED :(');
     } finally {
+        // closing or terminating the driver instance or build...
         await driver.quit();
     };
 })();
 
-// creating a function to log test results to a file
+// creating a function to log test results to a file...
 const logTestResult = (message) => {
+    // creating a that to the results folder, going up one diretory level so that 'results' can be in the main folder...
     const folderPath = path.join(__dirname, '../' , 'results');
+    
+    // getting current date when each test was ran...
     const date = new Date();
+
+    // creating a filename based on the current date in the format YYYY-MM-DD.txt...
     const fileName = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}.txt`;
+    
     const filePath = path.join(folderPath, fileName);
+
+    // getting the current time in HH:MM:SS format...
     const time = date.toTimeString().split(' ')[0];
 
+    // checking if the results folder exists, and create it if it does not exist...
     if (!fs.existsSync(folderPath)) {
         fs.mkdirSync(folderPath);
     };
 
+    // Append the log message to the file, creating the file if it doesn't exist...
     const logMessage = `${time} - ${message}\n`;
     fs.appendFileSync(filePath, logMessage, 'utf8');
 };
